@@ -3,9 +3,9 @@
 let loginBtn = document.querySelector('.login-btn');
 let dropLogin = document.querySelector('.drop-login');
 
-loginBtn.onclick = () => {
+/*loginBtn.onclick = () => {
    dropLogin.classList.toggle("drop-login-open");
-};
+};*/
 
 // Menu Open
 let menu = document.querySelector('.menu-icon');
@@ -46,15 +46,8 @@ var swiper = new Swiper(".inicio", {
    },
 });
 
-
-
-
-
-
 // Acordion de preguntas frecuentes 
-
 const acordionItems = document.querySelectorAll('.acordion-item') ;
-
 acordionItems.forEach((item) => {
    const acordionHeader = item.querySelector('.acordion-header');
 
@@ -98,8 +91,6 @@ var swiper = new Swiper(".control-imagenes", {
       prevEl: ".swiper-button-prev",
    },
 });
-
-
 
 
 

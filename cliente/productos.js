@@ -1,320 +1,368 @@
-// elementos visibles del carrito
-var carritoVisible = false;
 
-//  espera de cargar la pagina para seguir con el script
+// Array de productos
+const productos = [
 
-if (document.readyState=='loading'){
-   document.addEventListener('DOMContentLoaded',ready)
-}else{
-   ready();
-}
+   {
+      id: 1,
+      description: "Spider-man",
+      price: 4550,
+      quanty: 1,
+      img: "/img/Juegos/Spider-man.jpg",
+   },
+   {
+      id: 2,
+      description: "Aliens",
+      price: 3950,
+      quanty: 1,
+      img: "/img/Juegos/aliens.jpg",
+   },
+   {
+      id: 3,
+      description: "Assasins Creed",
+      price: 4530,
+      quanty: 1,
+      img: "/img/Juegos/Assasins Creed.jpg",
+   },
+   {
+      id: 4,
+      description: "Battlefield",
+      price: 3720,
+      quanty: 1,
+      img: "/img/Juegos/Battlefield.jpg",
+   },
+   {
+      id: 5,
+      description: "Destiny 2",
+      price: 3850,
+      quanty: 1,
+      img: "/img/Juegos/Destiny 2.jpg",
+   },
+   {
+      id: 6,
+      description: "God of War",
+      price: 5570,
+      quanty: 1,
+      img: "/img/Juegos/God of War.jpg",
+   },
+   {
+      id: 7,
+      description: "Injustice 2",
+      price: 3290,
+      quanty: 1,
+      img: "/img/Juegos/Injustice 2.jpg",
+   },
+   {
+      id: 8,
+      description: "Jump Force",
+      price: 3570,
+      quanty: 1,
+      img: "/img/Juegos/Jump force.jpg",
+   },
+   {
+      id: 9,
+      description: "Mass Effect",
+      price: 5250,
+      quanty: 1,
+      img: "/img/Juegos/mask.jpg",
+   },
+   {
+      id: 10,
+      description: "Mortal Combat 11",
+      price: 4650,
+      quanty: 1,
+      img: "/img/Juegos/Mortal Combat 11.jpg",
+   },
+   {
+      id: 11,
+      description: "Naruto",
+      price: 4550,
+      quanty: 1,
+      img: "/img/Juegos/naruto.jpg",
+   },
+   {
+      id: 12,
+      description: "NBA 2K 17",
+      price: 5550,
+      quanty: 1,
+      img: "/img/Juegos/NBA 2K 17.jpg",
+   },
+   {
+      id: 13,
+      description: "Niho",
+      price: 3350,
+      quanty: 1,
+      img: "/img/Juegos/nioh.jpg",
+   },
+   {
+      id: 14,
+      description: "Pess 2019",
+      price: 4550,
+      quanty: 1,
+      img: "/img/Juegos/pess 2019.jpg",
+   },
+];
 
-// funciones 
-// funcionalidad al boton eliminar del carrito
-function ready(){
-   var botonesEliminarItem = document.getElementsByClassName('btn-eliminar');
-   for (var i = 0; i < botonesEliminarItem.length; i++) {
-      var button = botonesEliminarItem[i];
-      button.addEventListener('click', eliminarItemCarrito);
-   }
+// index.js
+const shopContent = document.getElementById("shopContent");
+const cart = [];
 
-   // agrego funcion al boton sumar cantidad
-   var botonesSumarCantidad = document.getElementsByClassName('sumar-cantidad');
-   for (var i = 0; i < botonesSumarCantidad.length; i++){
-      var button = botonesSumarCantidad[i];
-      button.addEventListener('click', sumarCantidad);
-   }
+productos.forEach((producto) => {
 
-   // agrego funcion al boton restar cantidad
-   var botonesRestarCantidad = document.getElementsByClassName('restar-cantidad');
-   for (var i = 0; i < botonesRestarCantidad.length; i++){
-      var button = botonesRestarCantidad[i];
-      button.addEventListener('click', restarCantidad);
-   }
+   const content = document.createElement("div");
+   content.className = "card";
+   content.innerHTML = `
+   <img src="${producto.img}">
+   <h3>${producto.description}</h3>
+   <p class="precio">$ ${producto.price}</p>
+   `;
 
-   // agrego funcion al los botones de agregar al carrito
-   var botonesAgregarAlCarrito = document.getElementsByClassName('boton-item');
-   for (var i = 0; i < botonesAgregarAlCarrito.length; i++){
-      var button = botonesAgregarAlCarrito[i];
-      button.addEventListener('click', agregarAlCarritoClicked);
-   }
+   shopContent.append(content);
+   
 
-   // funcionalidad al boton pagar
-   document.getElementsByClassName('btn-pagar')[0].addEventListener('click', pagarClicked);
-}
+   const buyButton = document.createElement("button");
+   buyButton.innerText = "Agregar";
+   content.append(buyButton);
 
-
-
-// eliminando item seleccionado del carrito
-function eliminarItemCarrito (event) {
-   var buttonClicked = event.target;
-   buttonClicked.parentElement.parentElement.remove();
-
-   // Actualizacion de monto total del carrito
-   actualizarTotalCarrito();
-
-   // se controla si hay elementos en el carrito una vez se eliminan
-   // si no hay se oculta el carrito
-   ocultarCarrito();
-}
-
-// funcion de actualizacion del carrito de compras
-
-function actualizarTotalCarrito () {
-   // seleccion del contenedor carrito
-
-   var carritoContenedor = document.getElementsByClassName('carrito')[0];
-   var carritoItem = carritoContenedor.getElementsByClassName('carrito-item');
-   var total = 0;
-
-   // recorrido de los elementos para actualizarlo
-   for (var i = 0; i < carritoItem.length; i++) {
-      var item = carritoItem[i];
-      var precioElemento = item.getElementsByClassName('carrito-item-precio')[0];
-      console.log(precioElemento);
-
-      // se quita el simbolo de peso y el punto de milesimo
-      var precio = parseFloat(precioElemento.innerText.replace('$','').replace('.',''));
-      console.log(precio);
-
-      var cantidadItem = item.getElementsByClassName('carrito-item-cantidad')[0];
-      var cantidad = cantidadItem.value;
-      console.log(cantidad);
-      total = total + (precio * cantidad);
-   }
-   total = Math.round(total*100)/100;
-   document.getElementsByClassName('carrito-precio-total')[0].innerText = '$' + total.toLocaleString("es") + ',00';
-}
-
-// funcion ocultar carrito
-function ocultarCarrito(){
-   var carritoItems = document.getElementsByClassName('carrito-items')[0];
-   if (carritoItems.childElementCount == 0){
-      var carrito = document.getElementsByClassName('carrito')[0];
-      carrito.style.marginRight = '-100%';
-      carrito.style.opacity = '0';
-      carritoVisible = false;
-
-      // se maximiza el contenedor de elementos
-      var item = document.getElementsByClassName('container-items')[0];
-      item.style.width = '100%';
-   }
-}
-
-// Aumento de cantidad selecionada de elementos
-
-function sumarCantidad (event){
-   var buttonClicke = event.target;
-   var selector = buttonClicke.parentElement;
-   var cantidadActual = selector.getElementsByClassName('carrito-item-cantidad')[0].value;
-   console.log(cantidadActual);
-   cantidadActual ++;
-   selector.getElementsByClassName('carrito-item-cantidad')[0].value = cantidadActual;
-
-   // actualizacion del total de carrito
-   actualizarTotalCarrito();
-}
-
-// funcion restar cantidad
-function restarCantidad (event){
-   var buttonClicke = event.target;
-   var selector = buttonClicke.parentElement;
-   var cantidadActual = selector.getElementsByClassName('carrito-item-cantidad')[0].value;
-   console.log(cantidadActual);
-   cantidadActual --;
-
-   // controlamos que no sea menor a 1
-   if (cantidadActual >=1){
-      selector.getElementsByClassName('carrito-item-cantidad')[0].value = cantidadActual;
-      // actualizacion del total de carrito
-      actualizarTotalCarrito();
-   }
-}
-
-// funcion agreger al carrito
-function agregarAlCarritoClicked (event){
-   var button = event.target;
-   var item = button.parentElement;
-   var titulo = item.getElementsByClassName('titulo-item')[0].innerText;
-   console.log(titulo);
-
-   var precio = item.getElementsByClassName('precio-item')[0].innerText;
-   var imagenSrc = item.getElementsByClassName('img-item')[0].src;
-   console.log(imagenSrc);
-
-   // funcion que agrega el elemento al carrito. se le envia los parametros
-   agregarItemAlCarrito(titulo, precio, imagenSrc);
-
-   // agregar funcion de hacer visible el carrito con nuevos productos
-   hacerVisibleCarrito();
-}
-
-   // funcion que agrega el elemento al carrito
-   function agregarItemAlCarrito(titulo, precio, imagenSrc){
-      var item = document.createElement('div');
-      item.classList.add = 'item';
-      var itemsCarrito = document.getElementsByClassName('carrito-items')[0];
-
-      // controlamos los item ingresados no se encuentren en el carrito
-      var nombresItemsCarrito = itemsCarrito.getElementsByClassName('carrito-item-titulo');
-      for (var i = 0; i <nombresItemsCarrito.length; i++){
-         if (nombresItemsCarrito[i].innerText == titulo){
-            alert("Este producto ya se encuentra en el carrito");
-            return;
-         }
+   buyButton.addEventListener("click", () => {
+      const repeat = cart.some((repeatProducto) => repeatProducto.id === producto.id);
+if (repeat){
+   cart.map((prod) => {
+      if (prod.id === producto.id){
+         alert("Este producto ya se encuentra en el carrito");
+         return;
       }
-
-      var itemCarritoContenido = `
-
-      <div class="carrito-item">
-         <img src="${imagenSrc}" alt="" width="80px">
-         <div class="carrito-item-detalles" id="product-description">
-            <span id="product-description" class="carrito-item-titulo">${titulo}</span>
-               <div class="selector-cantidad">
-               <i class='bx bx-minus-circle restar-cantidad' ></i>
-                  <input type="text" value="1" id="quantity" class="carrito-item-cantidad" disabled>
-                  <i class='bx bx-plus-circle sumar-cantidad'></i>
-               </div>
-            <span class="carrito-item-precio" id="unit-price">${precio}</span>
-         </div>
-         <span class="btn-eliminar">
-         <i class='bx bx-trash-alt'></i>
-         </span>
-      </div>
-      `
-      item.innerHTML = itemCarritoContenido;
-      itemsCarrito.append(item);
-
-      //agregamos la funcionalidad al boton de eliminar el nuevo item
-      item.getElementsByClassName('btn-eliminar')[0].addEventListener('click', eliminarItemCarrito);
-
-      //agregamos la funcionalidad al boton de sumar el nuevo item
-      var botonSumarCantidad = item.getElementsByClassName('sumar-cantidad')[0];
-      botonSumarCantidad.addEventListener('click', sumarCantidad);
-
-      //agregamos la funcionalidad al boton de restar el nuevo item
-      var botonRestarCantidad = item.getElementsByClassName('restar-cantidad')[0];
-      botonRestarCantidad.addEventListener('click', restarCantidad);
+   });
+} else {
+      cart.push({
+         id: producto.id,
+         description: producto.description,
+         price: producto.price,
+         quanty: producto.quanty,
+         img: producto.img,
+      });
    }
 
-   // funcion al boton pagar
-
-   function pagarClicked(event){
-      alert("gracias");
-
-      // eliminar todos los elementos del carrito
-      var carritoItem = document.getElementsByClassName('carrito-items')[0];
-      while (carritoItem.hasChildNodes()){
-         carritoItem.removeChild(carritoItem.firstChild);
-      }
-
-      //funcion que actualiza al carrito
-      actualizarTotalCarrito();
-
-      //funcion que oculta al carrito
-      ocultarCarrito();
-   }
-
-   // funcion de visibilidad del carrito por primera vez
-   function hacerVisibleCarrito(){
-      carritoVisible = true;
-      var carrito = document.getElementsByClassName('carrito')[0];
-      carrito.style.marginRight = 0;
-      carrito.style.opacity = '1';
-
-      var items = document.getElementsByClassName('container-items')[0];
-      items.style.width = '60%';
-   }
-
-
-
-
-   // mercado pago
-
-// Add SDK credentials
-// REPLACE WITH YOUR PUBLIC KEY AVAILABLE IN: https://developers.mercadopago.com/panel
-const mercadopago = new mercadoPago('TEST-02d4208d-7139-439f-8162-96ee34befe9e', {
-   locale: 'es-AR' // The most common are: 'pt-BR', 'es-AR' and 'en-US'
+   mostrarContadorCarrito();
+   });
 });
 
- // Handle call to backend and generate preference.
-document.getElementById("checkout-btn").addEventListener("click", function () {
+// Creacion del carrito
+const carritoContainer = document.getElementById("carrito-container");
+const carritoOverlay = document.getElementById("carrito-overlay");
+const cartBtn = document.getElementById("cart-btn");
+const carritoContador = document.getElementById("carrito-contador");
 
-  //$('#checkout-btn').attr("disabled", true);
 
-  const orderData = {
-    quantity: document.getElementById("quantity").innerHTML,
-    description: document.getElementById("product-description").innerHTML,
-    price: document.getElementById("unit-price").innerHTML
-  };
+const mostrarCarrito = () => {
+      //limpiar carrito
+   carritoContainer.innerHTML = "";
+      //mostrar carrito
+   carritoContainer.style.display = "block";
+   carritoOverlay.style.display = "block";
 
-  fetch("http://localhost:5502/create_preference", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(orderData),
-  })
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (preference) {
-      createCheckoutButton(preference.id);
+   // header carrito
+   const carritoHeader = document.createElement("div");
 
-      //$(".shopping-cart").fadeOut(500);
-       //setTimeout(() => {
-         //$(".container_payment").show(500).fadeIn();
-       //}, 500);
-    })
-    .catch(function () {
-      alert("Unexpected error");
-       //$('#checkout-btn').attr("disabled", false);
-    });
+   // creacion de ocultar carrito
+   const carritoOcultar = document.createElement("div");
+   carritoOcultar.innerText = "❌"
+   carritoOcultar.className = "carrito-ocultar";
+   carritoHeader.append(carritoOcultar);
+
+   // funcion ocultar carrito
+   carritoOcultar.addEventListener("click", () => {
+      // ocultar carrito
+   carritoContainer.style.display = "none";
+   carritoOverlay.style.display = "none";
+   });
+
+   // creacion de titulo del carrito
+   const carritoTitulo = document.createElement("div");
+   carritoTitulo.innerText = "Carrito de Compra";
+   carritoTitulo.className = "carrito-titulo";
+   carritoHeader.append(carritoTitulo);
+
+   carritoContainer.append(carritoHeader);
+
+   // body carrito
+   if (cart.length > 0) {
+   cart.forEach((producto) => {
+      carritoBody = document.createElement("div");
+      carritoBody.className = "carrito-body"
+      carritoBody.innerHTML = `
+   <div class="producto">
+      <img class="producto-img" src="${producto.img}" />
+   <div class="producto-informacion">
+      <h4>${producto.description}</h4>
+   </div>
+   <div class="quantity">
+      <span class="quantity-btn-restar"> ➖ </span>
+      <span class="quantity-input">${producto.quanty }</span>
+      <span class="quantity-btn-sumar">➕</span>
+   </div>
+      <div class="precio">$ ${producto.price * producto.quanty}</div>
+      <div class="borrar-producto">❌</div>
+   </div>
+
+      `;
+      carritoContainer.append(carritoBody);
+
+      
+      // boton restar productos
+      const restar = carritoBody.querySelector(".quantity-btn-restar");
+      restar.addEventListener("click", () => {
+         if(producto.quanty !==1){
+            producto.quanty--;
+            mostrarCarrito();
+            mostrarContadorCarrito();
+         }
+      });
+      
+      // boton sumar productos
+      const sumar = carritoBody.querySelector(".quantity-btn-sumar");
+      sumar.addEventListener("click", () => {
+            producto.quanty++;
+            mostrarCarrito();
+            mostrarContadorCarrito();
+      });
+
+      // boton eliminar productos
+      const borrarProducto = carritoBody.querySelector(".borrar-producto");
+      borrarProducto.addEventListener ("click", () => {
+         borrarProductoCarrito(producto.id);
+      });
+   });
+
+
+   // footer carrito
+   const total = cart.reduce((acc, el) => acc + el.price * el.quanty, 0);
+
+   const carritoFooter = document.createElement("div");
+   carritoFooter.className = "carrito-footer"
+   carritoFooter.innerHTML = `
+   <div class="total-precio"> Total a Pagar: $ ${total}</div>
+   <button class="btn-primary" id="checkout-btn"> Pagar </button>
+   <div id="button-checkout"></div>
+   `;
+   carritoContainer.append(carritoFooter);
+
+      // mercado pago
+      // Add SDK credentials
+      // REPLACE WITH YOUR PUBLIC KEY AVAILABLE IN: https://developers.mercadopago.com/panel
+
+   const mercadopago = new MercadoPago('TEST-02d4208d-7139-439f-8162-96ee34befe9e', {
+      locale: 'es-AR' // The most common are: 'pt-BR', 'es-AR' and 'en-US'
+   });
+
+   const checkoutButton = carritoFooter.querySelector("#checkout-btn");
+
+   checkoutButton.addEventListener("click", function () {
+         // eliminar boton despues de utilizarlo
+      checkoutButton.remove();
+
+         // creacion de la orden de compra
+      const orderData = {
+            quantity: 1,
+            description: "Orden de compra",
+            price: total,
+      };
+
+      fetch("http://localhost:8080/create_preference", {
+         method: "POST",
+         headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+   })
+      .then(function (response) {
+         return response.json();
+   })
+      .then(function (preference) {
+         createCheckoutButton(preference.id);
+   })
+      .catch(function () {
+         alert("Unexpected error");
+   });
 });
 
 function createCheckoutButton(preferenceId) {
    // Initialize the checkout
-  const bricksBuilder = mercadopago.bricks();
+   const bricksBuilder = mercadopago.bricks();
 
-  const renderComponent = async (bricksBuilder) => {
-    if (window.checkoutButton) window.checkoutButton.unmount();
-    await bricksBuilder.create(
+   const renderComponent = async (bricksBuilder) => {
+      // if (window.checkoutButton) checkoutButton.unmount();
+      await bricksBuilder.create(
       'wallet',
-       'button-checkout', // class/id where the payment button will be displayed
+      'button-checkout', // class/id where the payment button will be displayed
       {
-        initialization: {
-          preferenceId: preferenceId
-        },
-        callbacks: {
-          onError: (error) => console.error(error),
-          onReady: () => {}
-        }
+         initialization: {
+         preferenceId: preferenceId
+      },
+      callbacks: {
+         onError: (error) => console.error(error),
+         onReady: () => {}
+      },
       }
-    );
-  };
-  window.checkoutButton =  renderComponent(bricksBuilder);
+   );
+   };
+   window.checkoutButton =  renderComponent(bricksBuilder);
 }
 
-  /*   // Handle price update
- function updatePrice() {
-   let quantity = document.getElementById("quantity").value;
-   let unitPrice = document.getElementById("unit-price").innerHTML;
-   let amount = parseInt(unitPrice) * parseInt(quantity);
- 
-   document.getElementById("cart-total").innerHTML = "$ " + amount;
-   document.getElementById("summary-price").innerHTML = "$ " + unitPrice;
-   document.getElementById("summary-quantity").innerHTML = quantity;
-   document.getElementById("summary-total").innerHTML = "$ " + amount;
- }
- 
- document.getElementById("quantity").addEventListener("change", updatePrice);
- updatePrice();
- 
- // Go back
- document.getElementById("go-back").addEventListener("click", function () {
-   $(".container_payment").fadeOut(500);
-   setTimeout(() => {
-     $(".shopping-cart").show(500).fadeIn();
-   }, 500);
-   $('#checkout-btn').attr("disabled", false);
- }); */
+   } else {
+      const carritoTexto = document.createElement("h2")
+      carritoTexto.className = "carrito-body";
+      carritoTexto.innerText = "Tu Carrito esta Vacio";
+      carritoContainer.append(carritoTexto);
+   };
+};
+
+// mostrar carrito
+cartBtn.addEventListener("click", mostrarCarrito);
+
+// funcionalidad de borrar producto
+const borrarProductoCarrito = (id) => {
+   const encontrarId = cart.findIndex((element) => element.id === id);
+   cart.splice(encontrarId, 1);
+   mostrarCarrito();
+   mostrarContadorCarrito();
+};
+
+
+// contador del carrito
+const mostrarContadorCarrito = () => {
+   const carritoLength = cart.reduce((acc, el) => acc + el.quanty, 0);
+   if (carritoLength > 0){
+      carritoContador.style.display = "block";
+      carritoContador.innerText = carritoLength;
+   } else {
+      carritoContador.style.display = "none";
+   }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
